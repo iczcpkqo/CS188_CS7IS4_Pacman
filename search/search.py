@@ -19,20 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 
-## problem
-## state
-## path
-## cost
-## ready_nodes
-## covered_states
 def Checker(**node):
-    # ready_nodes = node["ready_nodes"] #util.Stack()
-    # covered_states = node["covered_states"]
-
-    # TODO: 重构代码
-    #     def checker(node):
-    # (state, path, cost) = node
-
     print(node["state"])
     if node["problem"].isGoalState(node["state"]):
         return node["path"]
@@ -44,16 +31,6 @@ def Checker(**node):
     if not node["ready_nodes"].isEmpty():
         (node["state"], node["path"], node["cost"]) = node["ready_nodes"].pop()
         return Checker(**node)
-
-## problem
-## state
-## path
-## cost
-## ready_nodes
-## covered_states
-
-# return checker((problem.getStartState(), [], 0))
-
 
 class SearchProblem:
     """
@@ -123,33 +100,12 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    ## problem
-    ## state
-    ## path
-    ## cost
-    ## ready_nodes
-    ## covered_states
     return Checker(problem=problem,
                    state=problem.getStartState(),
                    path=[],
                    cost=0,
                    ready_nodes=util.Stack(),
                    covered_states=[])
-
-    # ready_nodes = util.Stack()
-    # covered_states = []
-    # def checker(node):
-    #     (state, path, cost) = node
-    #     if problem.isGoalState(state):
-    #         return path
-    #     else:
-    #         if state not in covered_states:
-    #             covered_states.append(state)
-    #             for sub_state, sub_action, sub_cost in problem.getSuccessors(state):
-    #                 ready_nodes.push([sub_state, path + [sub_action], cost + sub_cost])
-    #     if not ready_nodes.isEmpty():
-    #         return checker(ready_nodes.pop())
-    # return checker((problem.getStartState(), [], 0))
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -160,42 +116,6 @@ def breadthFirstSearch(problem):
                    cost=0,
                    ready_nodes=util.Queue(),
                    covered_states=[])
-
-
-    # ready_nodes = util.Queue()
-    # covered_states = []
-    # def checker(node):
-    #     (state, path, cost) = node
-    #     if problem.isGoalState(state):
-    #         return path
-    #     else:
-    #         if state not in covered_states:
-    #             covered_states.append(state)
-    #             for sub_state, sub_action, sub_cost in problem.getSuccessors(state):
-    #                 ready_nodes.push([sub_state, path + [sub_action], cost + sub_cost])
-
-
-
-    # fringe = util.Queue()
-    # start = [problem.getStartState(), 0, []]
-    # fringe.push(start)  # queue push at index_0
-    # closed = []
-    # while not fringe.isEmpty():
-    #     [state, cost, path] = fringe.pop()
-    #     print("a new path:")
-    #     print(path)
-    #     if problem.isGoalState(state):
-    #         print("final path:")
-    #         print(path)
-    #         return path
-    #     if state not in closed:
-    #         closed.append(state)
-    #         print("pro path:")
-    #         print(problem.getSuccessors(state))
-    #         for child_state, child_action, child_cost in problem.getSuccessors(state):
-    #             new_cost = cost + child_cost
-    #             new_path = path + [child_action]
-    #             fringe.push([child_state, new_cost, new_path])
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
