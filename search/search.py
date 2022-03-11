@@ -18,16 +18,17 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import sys
 
 def Checker(**node):
-    print(node["state"])
     if node["problem"].isGoalState(node["state"]):
         return node["path"]
     else:
         if node["state"] not in node["covered_states"]:
             node["covered_states"].append(node["state"])
             for sub_state, sub_action, sub_cost in node["problem"].getSuccessors(node["state"]):
-                node["ready_nodes"].push([sub_state, node["path"] + [sub_action], node["cost"] + sub_cost])
+                # node["ready_nodes"].push([sub_state, node["path"] + [sub_action], node["cost"] + sub_cost])
+                node["pusher"](node["ready_nodes"], [sub_state, node["path"] + [sub_action], node["cost"] + sub_cost], node["cost"] + sub_cost)
     if not node["ready_nodes"].isEmpty():
         (node["state"], node["path"], node["cost"]) = node["ready_nodes"].pop()
         return Checker(**node)
@@ -100,27 +101,44 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+    def pusher(ready_nodes, state, cost):
+        ready_nodes.push(state)
+    sys.setrecursionlimit(9999)
     return Checker(problem=problem,
                    state=problem.getStartState(),
                    path=[],
                    cost=0,
                    ready_nodes=util.Stack(),
-                   covered_states=[])
+                   covered_states=[],
+                   pusher=pusher)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    def pusher(ready_nodes, state, cost):
+        ready_nodes.push(state)
+    sys.setrecursionlimit(9999)
     return Checker(problem=problem,
                    state=problem.getStartState(),
                    path=[],
                    cost=0,
                    ready_nodes=util.Queue(),
-                   covered_states=[])
+                   covered_states=[],
+                   pusher=pusher)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def pusher(ready_nodes, state, cost):
+        ready_nodes.push(state, cost)
+    sys.setrecursionlimit(9999)
+    return Checker(problem=problem,
+                   state=problem.getStartState(),
+                   path=[],
+                   cost=0,
+                   ready_nodes=util.PriorityQueue(),
+                   covered_states=[],
+                   pusher=pusher)
 
 def nullHeuristic(state, problem=None):
     """
@@ -132,7 +150,20 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def pusher(ready_nodes, state, cost):
+        # (state_x, state_y) = state[0]
+        # (goal_x, goal_y) = problem.goal
+        # f_n = cost + abs(goal_x-state_x) + abs(goal_y - state_y)
+        f_n = cost + heuristic(state[0], problem)
+        ready_nodes.push(state, f_n)
+    sys.setrecursionlimit(9999)
+    return Checker(problem=problem,
+                   state=problem.getStartState(),
+                   path=[],
+                   cost=0,
+                   ready_nodes=util.PriorityQueue(),
+                   covered_states=[],
+                   pusher=pusher)
 
 
 # Abbreviations
