@@ -164,7 +164,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                    ready_nodes=util.PriorityQueue(),
                    covered_states=[],
                    pusher=pusher)
-
+#
 
 # Abbreviations
 bfs = breadthFirstSearch
