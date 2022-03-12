@@ -85,14 +85,6 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        # successors = [(next_state, prob),]
-        # successors = self.mdp.getTransitionStatesAndProbs(state, action)
-        # qval = 0
-        # for next_state, prob in successors:
-        #     qval += prob * (self.mdp.getReward(state, action, next_state)
-        #                     + self.discount * self.getValue(next_state))
-        # return qval
-
         (calculate_qval, nexter) = (0, self.mdp.getTransitionStatesAndProbs(state, action))
         calculater = lambda x,y: y * (self.mdp.getReward(state, action, x) + self.discount * self.getValue(x))
         for next_step, block_probability in nexter:
@@ -185,18 +177,18 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
         box_states = self.mdp.getStates()
-        # numStates = len(box_states)
-
         pre_dict = {}
-        for state in [ i if self.mdp.isTerminal(i) else not self.mdp.isTerminal(i) for i in box_states]:
+
+        checkbox_states = []
+        for s in box_states:
+            if self.mdp.isTerminal(s):
+                continue
+            else:
+                checkbox_states.append(s)
+        for state in checkbox_states:
             for action in self.mdp.getPossibleActions(state):
-                pair_box = []
-                for pair in self.mdp.getTransitionStatesAndProbs(state, action):
-                    pair_box.append(pair[0])
-                for nextState in pair_box:
-                    if nextState in pre_dict:
-                        continue
-                    else:    
+                for nextState in [pair[0] for pair in self.mdp.getTransitionStatesAndProbs(state, action)]:
+                    if nextState not in pre_dict:
                         pre_dict[nextState] = set()
                     pre_dict[nextState].add(state)
 
@@ -215,9 +207,9 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
             if not self.mdp.isTerminal(state):
                 max_q = max([self.computeQValueFromValues(state, i) for i in self.mdp.getPossibleActions(state)])
                 self.values[state] = max_q
-                for pred in pre_dict[state]:
+                checkbox_pre_dict = pre_dict[state]
+                for pred in checkbox_pre_dict:
                     max_q = max([self.computeQValueFromValues(pred, i) for i in self.mdp.getPossibleActions(pred)])
                     margin = abs(max_q - self.getValue(pred))
                     if margin > self.theta:
                         youxian_queue.update(pred, -margin)
-
